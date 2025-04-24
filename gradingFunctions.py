@@ -510,3 +510,38 @@ def createAssignment(aname, coursename, opath=os.getcwd()):
     os.chdir('..')
     print(f'Student notebook copied to {temp_student_copy_path}')
     print(f'Assignment {aname} created succesfully!')
+
+def addStudent(coursename):
+    """
+    Adds a new student to the nbgrader course database.
+    
+    Parameters:
+    ----------
+    coursename : str
+        The name of the course for which the student is being added.
+    
+    Notes:
+    -----
+    - This function will prompt for the student's first name, last name, and username.
+    - It will then create a new student entry in the nbgrader database for the specified course.
+    """
+    
+    opath = os.getcwd()
+
+    coursepath = os.path.join(opath, coursename)
+    os.chdir(coursepath)
+    
+    first_name = input("Enter student's first name: ")
+    last_name = input("Enter student's last name: ")
+    username = input("Enter student's username: ")
+    
+    subprocess.run(["nbgrader", "db", "student", "add", username, "--first-name", first_name, "--last-name", last_name])
+    
+    print(f'Student {first_name} {last_name} ({username}) added successfully!')
+
+    os.chdir(opath)  # Change back to the parent directory after adding the student
+
+    subpath = os.path.join(coursepath, 'submitted')
+    student_subpath = os.path.join(subpath, username)
+    os.mkdir(student_subpath)
+    print(f'Submission folder created for {username} at {student_subpath}')
